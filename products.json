@@ -1,0 +1,13 @@
+{
+  "market_name": "දඹුල්ල ආර්ථික මධ්‍යස්ථානය",
+  "last_updated": "2026-04-29",
+  "products": [
+    { "id": 1, "name": "තක්කාලි", "price": 240, "trend": "up", "change": "8%", "unit": "1kg" },
+    { "id": 2, "name": "ලොකු ලූනු", "price": 180, "trend": "down", "change": "2%", "unit": "1kg" },
+    { "id": 3, "name": "කැරට්", "price": 320, "trend": "up", "change": "5%", "unit": "1kg" },
+    { "id": 4, "name": "බෝංචි", "price": 410, "trend": "down", "change": "2%", "unit": "1kg" },
+    { "id": 5, "name": "අමු මිරිස්", "price": 850, "trend": "stable", "change": "0%", "unit": "1kg" },
+    { "id": 6, "name": "ගෝවා", "price": 190, "trend": "up", "change": "3%", "unit": "1kg" },
+    { "id": 7, "name": "අල", "price": 210, "trend": "stable", "change": "0%", "unit": "1kg" }
+  ]
+}

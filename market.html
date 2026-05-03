@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello Agro | Market</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <button class="mobile-menu-toggle" onclick="toggleMenu()">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+
+        <div class="nav-links" id="navLinks">
+            <a href="climate.html">Climate</a>
+            <a href="market.html" class="active">Market</a>
+            <a href="prediction.html">Prediction</a>
+            <a href="chat.html">AI Chat</a>
+            <a href="camera.html">Camara</a>
+        </div>
+    </nav>
+
+    <main class="market-page-container">
+        <!-- Figma Search/Filter Section -->
+        <header class="market-controls">
+            <div class="control-group">
+                <label>Market</label>
+                <div class="select-wrapper">
+                    <select id="marketDropdown" onchange="filterProducts()">
+                        <option value="all">All Markets</option>
+                        <option value="dambulla">Dambulla</option>
+                        <option value="peliyagoda">Peliyagoda</option>
+                        <option value="meegoda">Meegoda</option>
+                        <option value="narahenpita">Narahenpita</option>
+                        <option value="keppetipola">Keppetipola</option>
+                        <option value="veyangoda">Veyangoda</option>
+                        <option value="thambuththegama">Thambuththegama</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>Product</label>
+                <div class="search-wrapper">
+                    <input type="text" id="searchInput" placeholder="Search product..." onkeyup="filterProducts()">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- Product Cards Grid -->
+        <section class="product-grid" id="productGrid">
+            <!-- Cards will be injected by JavaScript -->
+        </section>
+    </main>
+
+    <script src="main.js"></script>
+</body>
+</html>

@@ -1,10 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
-    
-    // --- 1. API Configuration ---
+
     const apiKey = '4af0cca21c2dcf38db61496754ec7ebb';
 
-    // --- 2. Location & Weather ---
-    // Weather පෙන්වන IDs පේජ් එකේ තිබුණොත් විතරක් මේක වැඩ කරයි
     if (document.getElementById('city-name')) {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(position => {
@@ -20,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`);
             const data = await response.json();
 
-            // Element එක තිබේ දැයි පරීක්ෂා කර අගයන් ඇතුළත් කිරීම
+
             const cityEl = document.getElementById('city-name');
             const tempEl = document.querySelector('.temp-text');
             const descEl = document.getElementById('weather-desc');
@@ -37,10 +34,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // --- 3. JSON Market Data Logic ---
+
     async function loadMarketPrices() {
         const container = document.getElementById('product-list-container');
-        if (!container) return; // පේජ් එකේ නැත්නම් නවත්වන්න
+        if (!container) return; 
 
         try {
             const response = await fetch('products.json');
@@ -68,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // --- 4. Modal Logic (Global Scope) ---
+
     window.openModal = function(id) {
         const modal = document.getElementById(id);
         if (modal) {
@@ -86,9 +83,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
-    // --- 5. Charts Configuration (Safe Checks) ---
+
     
-    // Rain Chart
+
     function updateRainChart(chance) {
         const ctx = document.getElementById('rainProbabilityChart');
         if (!ctx) return;
@@ -103,7 +100,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (valEl) valEl.innerText = `${chance}%`;
     }
 
-    // Tomato & Onion Mini Charts
     const tomatoCtx = document.getElementById('tomatoPriceChart');
     if (tomatoCtx) {
         new Chart(tomatoCtx.getContext('2d'), {
@@ -135,10 +131,152 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// Navigation toggle (Global Scope)
+
 function toggleMenu() {
     const navLinks = document.getElementById('navLinks');
     if (navLinks) {
         navLinks.classList.toggle('active');
     }
+}
+
+
+const allProducts = [
+    // --- DAMBULLA ---
+    { name: "Beans", market: "dambulla", price: "420/-", weight: "1 Kg", change: "3% ↑" },
+    { name: "Carrot", market: "dambulla", price: "380/-", weight: "1 Kg", change: "2% ↓" },
+    { name: "Leeks", market: "dambulla", price: "245/-", weight: "1 Kg", change: "1% ↑" },
+    { name: "Tomato", market: "dambulla", price: "190/-", weight: "1 Kg", change: "5% ↓" },
+    { name: "Potato", market: "dambulla", price: "215/-", weight: "1 Kg", change: "Stable" },
+    { name: "Green Chili", market: "dambulla", price: "560/-", weight: "1 Kg", change: "8% ↑" },
+    { name: "Brinjal", market: "dambulla", price: "165/-", weight: "1 Kg", change: "4% ↓" },
+    { name: "Cabbage", market: "dambulla", price: "235/-", weight: "1 Kg", change: "2% ↑" },
+    { name: "Pumpkin", market: "dambulla", price: "115/-", weight: "1 Kg", change: "1% ↓" },
+    { name: "Onion", market: "dambulla", price: "325/-", weight: "1 Kg", change: "3% ↑" },
+
+    // --- PELIYAGODA ---
+    { name: "Beans", market: "peliyagoda", price: "440/-", weight: "1 Kg", change: "5% ↑" },
+    { name: "Carrot", market: "peliyagoda", price: "400/-", weight: "1 Kg", change: "1% ↓" },
+    { name: "Leeks", market: "peliyagoda", price: "260/-", weight: "1 Kg", change: "2% ↑" },
+    { name: "Tomato", market: "peliyagoda", price: "210/-", weight: "1 Kg", change: "4% ↓" },
+    { name: "Potato", market: "peliyagoda", price: "230/-", weight: "1 Kg", change: "2% ↑" },
+    { name: "Green Chili", market: "peliyagoda", price: "580/-", weight: "1 Kg", change: "6% ↑" },
+    { name: "Brinjal", market: "peliyagoda", price: "180/-", weight: "1 Kg", change: "Stable" },
+    { name: "Cabbage", market: "peliyagoda", price: "250/-", weight: "1 Kg", change: "1% ↑" },
+    { name: "Pumpkin", market: "peliyagoda", price: "130/-", weight: "1 Kg", change: "3% ↓" },
+    { name: "Onion", market: "peliyagoda", price: "340/-", weight: "1 Kg", change: "2% ↑" },
+
+    // --- MEEGODA ---
+    { name: "Beans", market: "meegoda", price: "415/-", weight: "1 Kg", change: "2% ↓" },
+    { name: "Carrot", market: "meegoda", price: "375/-", weight: "1 Kg", change: "Stable" },
+    { name: "Leeks", market: "meegoda", price: "240/-", weight: "1 Kg", change: "3% ↑" },
+    { name: "Tomato", market: "meegoda", price: "175/-", weight: "1 Kg", change: "6% ↓" },
+    { name: "Potato", market: "meegoda", price: "210/-", weight: "1 Kg", change: "1% ↑" },
+    { name: "Green Chili", market: "meegoda", price: "540/-", weight: "1 Kg", change: "4% ↑" },
+    { name: "Brinjal", market: "meegoda", price: "155/-", weight: "1 Kg", change: "2% ↓" },
+    { name: "Cabbage", market: "meegoda", price: "225/-", weight: "1 Kg", change: "Stable" },
+    { name: "Pumpkin", market: "meegoda", price: "110/-", weight: "1 Kg", change: "5% ↓" },
+    { name: "Onion", market: "meegoda", price: "315/-", weight: "1 Kg", change: "1% ↑" },
+
+    // --- NARAHENPITA ---
+    { name: "Beans", market: "narahenpita", price: "450/-", weight: "1 Kg", change: "7% ↑" },
+    { name: "Carrot", market: "narahenpita", price: "410/-", weight: "1 Kg", change: "3% ↑" },
+    { name: "Leeks", market: "narahenpita", price: "270/-", weight: "1 Kg", change: "4% ↑" },
+    { name: "Tomato", market: "narahenpita", price: "220/-", weight: "1 Kg", change: "2% ↓" },
+    { name: "Potato", market: "narahenpita", price: "240/-", weight: "1 Kg", change: "5% ↑" },
+    { name: "Green Chili", market: "narahenpita", price: "600/-", weight: "1 Kg", change: "10% ↑" },
+    { name: "Brinjal", market: "narahenpita", price: "190/-", weight: "1 Kg", change: "3% ↑" },
+    { name: "Cabbage", market: "narahenpita", price: "260/-", weight: "1 Kg", change: "2% ↑" },
+    { name: "Pumpkin", market: "narahenpita", price: "140/-", weight: "1 Kg", change: "1% ↑" },
+    { name: "Onion", market: "narahenpita", price: "350/-", weight: "1 Kg", change: "4% ↑" },
+
+    // --- KEPPETIPOLA ---
+    { name: "Beans", market: "keppetipola", price: "400/-", weight: "1 Kg", change: "Stable" },
+    { name: "Carrot", market: "keppetipola", price: "360/-", weight: "1 Kg", change: "5% ↓" },
+    { name: "Leeks", market: "keppetipola", price: "230/-", weight: "1 Kg", change: "2% ↓" },
+    { name: "Tomato", market: "keppetipola", price: "160/-", weight: "1 Kg", change: "8% ↓" },
+    { name: "Potato", market: "keppetipola", price: "200/-", weight: "1 Kg", change: "1% ↓" },
+    { name: "Green Chili", market: "keppetipola", price: "520/-", weight: "1 Kg", change: "Stable" },
+    { name: "Brinjal", market: "keppetipola", price: "150/-", weight: "1 Kg", change: "5% ↓" },
+    { name: "Cabbage", market: "keppetipola", price: "215/-", weight: "1 Kg", change: "3% ↓" },
+    { name: "Pumpkin", market: "keppetipola", price: "105/-", weight: "1 Kg", change: "2% ↓" },
+    { name: "Onion", market: "keppetipola", price: "310/-", weight: "1 Kg", change: "Stable" },
+
+    // --- VEYANGODA ---
+    { name: "Beans", market: "veyangoda", price: "425/-", weight: "1 Kg", change: "1% ↑" },
+    { name: "Carrot", market: "veyangoda", price: "385/-", weight: "1 Kg", change: "2% ↑" },
+    { name: "Leeks", market: "veyangoda", price: "255/-", weight: "1 Kg", change: "Stable" },
+    { name: "Tomato", market: "veyangoda", price: "185/-", weight: "1 Kg", change: "3% ↓" },
+    { name: "Potato", market: "veyangoda", price: "220/-", weight: "1 Kg", change: "2% ↑" },
+    { name: "Green Chili", market: "veyangoda", price: "570/-", weight: "1 Kg", change: "5% ↑" },
+    { name: "Brinjal", market: "veyangoda", price: "170/-", weight: "1 Kg", change: "1% ↑" },
+    { name: "Cabbage", market: "veyangoda", price: "245/-", weight: "1 Kg", change: "Stable" },
+    { name: "Pumpkin", market: "veyangoda", price: "120/-", weight: "1 Kg", change: "2% ↓" },
+    { name: "Onion", market: "veyangoda", price: "330/-", weight: "1 Kg", change: "3% ↑" },
+
+    // --- THAMBUTHTHEGAMA ---
+    { name: "Beans", market: "thambuththegama", price: "410/-", weight: "1 Kg", change: "3% ↓" },
+    { name: "Carrot", market: "thambuththegama", price: "370/-", weight: "1 Kg", change: "Stable" },
+    { name: "Leeks", market: "thambuththegama", price: "235/-", weight: "1 Kg", change: "2% ↑" },
+    { name: "Tomato", market: "thambuththegama", price: "165/-", weight: "1 Kg", change: "10% ↓" },
+    { name: "Potato", market: "thambuththegama", price: "205/-", weight: "1 Kg", change: "Stable" },
+    { name: "Green Chili", market: "thambuththegama", price: "530/-", weight: "1 Kg", change: "4% ↑" },
+    { name: "Brinjal", market: "thambuththegama", price: "150/-", weight: "1 Kg", change: "6% ↓" },
+    { name: "Cabbage", market: "thambuththegama", price: "220/-", weight: "1 Kg", change: "1% ↑" },
+    { name: "Pumpkin", market: "thambuththegama", price: "100/-", weight: "1 Kg", change: "5% ↓" },
+    { name: "Onion", market: "thambuththegama", price: "315/-", weight: "1 Kg", change: "2% ↑" }
+];
+
+
+function displayProducts(data) {
+    const grid = document.getElementById('productGrid');
+    grid.innerHTML = "";
+
+    if (data.length === 0) {
+        grid.innerHTML = `<p style="color: white; grid-column: 1/-1; text-align: center;">No products found.</p>`;
+        return;
+    }
+
+    data.forEach(item => {
+        const card = `
+            <div class="market-card">
+                <div class="card-left">
+                    <h2 class="item-name">${item.name}</h2>
+                    <p class="item-meta">${item.weight} &nbsp; ${item.change}</p>
+                    <span class="market-label">${item.market}</span>
+                </div>
+                <div class="card-right">
+                    <h1 class="item-price">${item.price}</h1>
+                </div>
+            </div>
+        `;
+        grid.innerHTML += card;
+    });
+}
+
+
+function filterProducts() {
+    const marketVal = document.getElementById('marketDropdown').value;
+    const searchVal = document.getElementById('searchInput').value.toLowerCase();
+
+    const filtered = allProducts.filter(p => {
+       
+        const matchesMarket = (marketVal === "all" || p.market.toLowerCase() === marketVal.toLowerCase());
+
+        const matchesSearch = p.name.toLowerCase().includes(searchVal);
+        
+        return matchesMarket && matchesSearch;
+    });
+
+    displayProducts(filtered);
+}
+
+
+window.onload = () => {
+    displayProducts(allProducts);
+};
+
+
+function toggleMenu() {
+    document.getElementById('navLinks').classList.toggle('active');
+    document.querySelector('.mobile-menu-toggle').classList.toggle('active');
 }

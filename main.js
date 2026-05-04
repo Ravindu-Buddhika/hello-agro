@@ -18,19 +18,16 @@ const genAI = new GoogleGenerativeAI(API_KEY);
 // }
 // checkAvailableModels();
 
-// Mobile Menu එක වැඩ කිරීමට අවශ්‍ය Logic එක
 document.addEventListener('DOMContentLoaded', () => {
     const menuToggle = document.querySelector('.mobile-menu-toggle');
     const navLinks = document.querySelector('.nav-links');
 
     if (menuToggle && navLinks) {
-        // Toggle Button එක click කරන විට active class එක මාරු කිරීම
         menuToggle.addEventListener('click', () => {
             navLinks.classList.toggle('active');
             menuToggle.classList.toggle('active');
         });
 
-        // මෙනු එකේ තියෙන link එකක් click කළාම මෙනු එක වහන්න
         document.querySelectorAll('.nav-links a').forEach(link => {
             link.addEventListener('click', () => {
                 navLinks.classList.remove('active');
@@ -154,7 +151,7 @@ window.displayProducts = function(data) {
     });
 };
 
-// 4. Filtering Logic
+
 window.filterProducts = function() {
     const marketDropdown = document.getElementById('marketDropdown');
     const searchInput = document.getElementById('searchInput');
@@ -247,65 +244,61 @@ window.generatePrediction = async function() {
     }
 };
 
-// 6. Initial Load
-window.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('productGrid')) {
-        displayProducts(allProducts);
+
+const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.querySelector('.send-btn');
+
+    if (chatInput && sendBtn) {
+        sendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
     }
 });
 
-let myChart = null;
+async function sendMessage() {
+    const inputField = document.getElementById('chatInput');
+    const message = inputField.value.trim();
 
-window.initChart = function(monthlyTrend) {
-    const ctx = document.getElementById('priceChart').getContext('2d');
-    
+    if (!message) return;
 
-    if (myChart) {
-        myChart.destroy();
+    appendMessage('user', message);
+    inputField.value = '';
+
+    try {
+        console.log("⏳ Gemini response එක ලබා ගනිමින්...");
+        
+        const result = await model.generateContent(message);
+        const response = await result.response;
+        const aiText = response.text();
+
+        appendMessage('ai', aiText);
+
+    } catch (error) {
+        console.error("❌ Gemini Error:", error);
+        appendMessage('ai', "Sorry, I couldn't fetch the response. Please try again.");
     }
+}
 
 
-    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(30, 93, 3, 0.5)');
-    gradient.addColorStop(1, 'rgba(30, 93, 3, 0)');
+function appendMessage(sender, text) {
+    const chatWindow = document.getElementById('chatWindow');
+    if (!chatWindow) return;
 
-    const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const msgDiv = document.createElement('div');
+    msgDiv.classList.add('message', sender === 'user' ? 'user-msg' : 'ai-msg');
 
-    myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Price Trend (Rs.)',
-                data: monthlyTrend,
-                borderColor: '#1e5d03',
-                backgroundColor: gradient,
-                borderWidth: 3,
-                fill: true,
-                tension: 0.4, 
-                pointRadius: 4,
-                pointBackgroundColor: '#1e5d03'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false 
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: false,
-                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                    ticks: { color: '#888' }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: { color: '#888' }
-                }
-            }
-        }
-    });
-};
+    if (sender === 'ai') {
+
+        msgDiv.innerHTML = marked.parse(text);
+    } else {
+        msgDiv.innerText = text;
+    }
+    
+    chatWindow.appendChild(msgDiv);
+    
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+}

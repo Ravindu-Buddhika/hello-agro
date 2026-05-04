@@ -1,145 +1,24 @@
-document.addEventListener('DOMContentLoaded', function () {
+// 1. Gemini Configuration (Direct CDN Import)
+import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
-    const apiKey = '4af0cca21c2dcf38db61496754ec7ebb';
+const API_KEY = "AIzaSyCbJe2PsgO_gdzxNnfqB5K_abp5JcvGhZs";
+const genAI = new GoogleGenerativeAI(API_KEY);
 
-    if (document.getElementById('city-name')) {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(position => {
-                fetchWeather(position.coords.latitude, position.coords.longitude);
-            }, error => {
-                fetchWeather(6.9271, 79.8612); // Default Colombo
-            });
-        }
-    }
-
-    async function fetchWeather(lat, lon) {
-        try {
-            const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`);
-            const data = await response.json();
-
-
-            const cityEl = document.getElementById('city-name');
-            const tempEl = document.querySelector('.temp-text');
-            const descEl = document.getElementById('weather-desc');
-
-            if (cityEl) cityEl.innerText = `📍 ${data.name}, ${data.sys.country}`;
-            if (tempEl) tempEl.innerText = `${Math.round(data.main.temp)}°C`;
-            if (descEl) descEl.innerText = data.weather[0].description;
-            
-            if (document.getElementById('rainProbabilityChart')) {
-                updateRainChart(data.clouds.all);
-            }
-        } catch (error) {
-            console.error("Weather Error:", error);
-        }
-    }
-
-
-    async function loadMarketPrices() {
-        const container = document.getElementById('product-list-container');
-        if (!container) return; 
-
-        try {
-            const response = await fetch('products.json');
-            const data = await response.json();
-            container.innerHTML = ''; 
-
-            data.products.forEach(item => {
-                let trendColor = item.trend === 'up' ? 'text-red-500' : (item.trend === 'down' ? 'text-emerald-500' : 'text-gray-400');
-                let trendIcon = item.trend === 'up' ? '↑' : (item.trend === 'down' ? '↓' : '•');
-
-                container.innerHTML += `
-                    <div class="p-4 border rounded-3xl flex justify-between items-center bg-white shadow-sm">
-                        <div>
-                            <h4 class="font-bold text-gray-700">${item.name}</h4>
-                            <p class="text-lg font-black text-[#0d9488]">රු. ${item.price}</p>
-                            <p class="text-[10px] text-gray-400 font-bold uppercase">${item.unit}</p>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-xs font-black ${trendColor}">${trendIcon} ${item.change}</span>
-                        </div>
-                    </div>`;
-            });
-        } catch (error) {
-            console.error("Market Data Error:", error);
-        }
-    }
-
-
-    window.openModal = function(id) {
-        const modal = document.getElementById(id);
-        if (modal) {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            if (id === 'market-modal') loadMarketPrices();
-        }
-    };
-
-    window.closeModal = function(id) {
-        const modal = document.getElementById(id);
-        if (modal) {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-    };
-
-
+// async function checkAvailableModels() {
+//     const apiKey = "AIzaSyCbJe2PsgO_gdzxNnfqB5K_abp5JcvGhZs";
+//     const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
     
+//     try {
+//         const response = await fetch(url);
+//         const data = await response.json();
+//         console.log("ඔයාගේ Key එකට වැඩ කරන Models:", data.models.map(m => m.name));
+//     } catch (e) {
+//         console.error("Models ලැයිස්තුව ලබා ගත නොහැක:", e);
+//     }
+// }
+// checkAvailableModels();
 
-    function updateRainChart(chance) {
-        const ctx = document.getElementById('rainProbabilityChart');
-        if (!ctx) return;
-        
-        if (window.rainChart) window.rainChart.destroy();
-        window.rainChart = new Chart(ctx.getContext('2d'), {
-            type: 'doughnut',
-            data: { datasets: [{ data: [chance, 100 - chance], backgroundColor: ['#0d9488', '#e2eee2'], borderWidth: 0 }] },
-            options: { cutout: '80%', plugins: { legend: { display: false } } }
-        });
-        const valEl = document.querySelector('.chart-val');
-        if (valEl) valEl.innerText = `${chance}%`;
-    }
-
-    const tomatoCtx = document.getElementById('tomatoPriceChart');
-    if (tomatoCtx) {
-        new Chart(tomatoCtx.getContext('2d'), {
-            type: 'line',
-            data: { labels: ['','','','',''], datasets: [{ data: [210, 225, 220, 235, 240], borderColor: '#ef4444', borderWidth: 2, fill: false, tension: 0.4 }] },
-            options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
-        });
-    }
-
-    const onionCtx = document.getElementById('onionPriceChart');
-    if (onionCtx) {
-        new Chart(onionCtx.getContext('2d'), {
-            type: 'line',
-            data: { labels: ['','','','',''], datasets: [{ data: [200, 195, 190, 185, 180], borderColor: '#10b981', borderWidth: 2, fill: false, tension: 0.4 }] },
-            options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
-        });
-    }
-
-    const mainChartCtx = document.getElementById('marketPredictionChart');
-    if (mainChartCtx) {
-        new Chart(mainChartCtx.getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: ['අද', 'හෙට', 'අනිද්දා', 'සිකුරාදා', 'සෙනසුරාදා'],
-                datasets: [{ label: 'Price', data: [240, 255, 270, 260, 285], borderColor: '#0d9488', backgroundColor: 'rgba(13, 148, 136, 0.1)', fill: true, tension: 0.4 }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-        });
-    }
-});
-
-
-function toggleMenu() {
-    const navLinks = document.getElementById('navLinks');
-    if (navLinks) {
-        navLinks.classList.toggle('active');
-    }
-}
-
-
+// 2. Full Data Array
 const allProducts = [
     // --- DAMBULLA ---
     { name: "Beans", market: "dambulla", price: "420/-", weight: "1 Kg", change: "3% ↑" },
@@ -224,20 +103,22 @@ const allProducts = [
     { name: "Cabbage", market: "thambuththegama", price: "220/-", weight: "1 Kg", change: "1% ↑" },
     { name: "Pumpkin", market: "thambuththegama", price: "100/-", weight: "1 Kg", change: "5% ↓" },
     { name: "Onion", market: "thambuththegama", price: "315/-", weight: "1 Kg", change: "2% ↑" }
+
 ];
 
-
-function displayProducts(data) {
+// 3. Market Page Display Logic
+window.displayProducts = function(data) {
     const grid = document.getElementById('productGrid');
-    grid.innerHTML = "";
+    if (!grid) return; 
 
+    grid.innerHTML = "";
     if (data.length === 0) {
         grid.innerHTML = `<p style="color: white; grid-column: 1/-1; text-align: center;">No products found.</p>`;
         return;
     }
 
     data.forEach(item => {
-        const card = `
+        grid.innerHTML += `
             <div class="market-card">
                 <div class="card-left">
                     <h2 class="item-name">${item.name}</h2>
@@ -247,36 +128,96 @@ function displayProducts(data) {
                 <div class="card-right">
                     <h1 class="item-price">${item.price}</h1>
                 </div>
-            </div>
-        `;
-        grid.innerHTML += card;
+            </div>`;
     });
-}
+};
 
+// 4. Filtering Logic
+window.filterProducts = function() {
+    const marketDropdown = document.getElementById('marketDropdown');
+    const searchInput = document.getElementById('searchInput');
+    
+    if(!marketDropdown || !searchInput) return;
 
-function filterProducts() {
-    const marketVal = document.getElementById('marketDropdown').value;
-    const searchVal = document.getElementById('searchInput').value.toLowerCase();
+    const marketVal = marketDropdown.value.toLowerCase();
+    const searchVal = searchInput.value.toLowerCase();
 
     const filtered = allProducts.filter(p => {
-       
-        const matchesMarket = (marketVal === "all" || p.market.toLowerCase() === marketVal.toLowerCase());
-
+        const matchesMarket = (marketVal === "all" || p.market.toLowerCase() === marketVal);
         const matchesSearch = p.name.toLowerCase().includes(searchVal);
-        
         return matchesMarket && matchesSearch;
     });
 
     displayProducts(filtered);
-}
-
-
-window.onload = () => {
-    displayProducts(allProducts);
 };
 
+// 5. Prediction Logic
+window.generatePrediction = async function() {
+    const productInput = document.getElementById('productSearch');
+    if (!productInput || !productInput.value) return alert("කරුණාකර බෝගයක නමක් ඇතුළත් කරන්න.");
 
-function toggleMenu() {
-    document.getElementById('navLinks').classList.toggle('active');
-    document.querySelector('.mobile-menu-toggle').classList.toggle('active');
-}
+    const productName = productInput.value;
+    const btn = document.querySelector('.search-section button');
+    const apiKey = "AIzaSyCbJe2PsgO_gdzxNnfqB5K_abp5JcvGhZs"; 
+    
+    btn.innerText = "⌛";
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
+
+    const prompt = `Based on these prices: ${JSON.stringify(allProducts)}, predict future prices for ${productName}. 
+                    Return ONLY a raw JSON object with no markdown tags. 
+                    Format: {"today": 420, "nextWeek": 435, "nextMonth": 450, "monthlyTrend": [400, 410, 420, 430, 440, 450, 460, 470, 480, 490, 500, 510]}`;
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }]
+            })
+        });
+
+        const result = await response.json();
+        
+        // 1. මුළු response එකම බලමු
+        console.log("Full Gemini Result:", result);
+
+        if (!response.ok) {
+            throw new Error(result.error ? result.error.message : "API Call Failed");
+        }
+
+        const responseText = result.candidates[0].content.parts[0].text;
+        
+        // 2. එන raw text එක බලමු
+        console.log("Raw Response Text:", responseText);
+        
+        const cleanJson = responseText.replace(/```json|```/g, "").trim();
+        const data = JSON.parse(cleanJson);
+
+        // 3. Parse කරපු JSON data එක බලමු
+        console.log("Parsed Data Object:", data);
+
+        // UI Update
+        document.getElementById('todayPrice').innerText = `${data.today}/-`;
+        document.getElementById('weekPrice').innerText = `${data.nextWeek}/-`;
+        document.getElementById('monthPrice').innerText = `${data.nextMonth}/-`;
+        
+        if (typeof window.initChart === "function") {
+            window.initChart(data.monthlyTrend);
+        }
+
+    } catch (e) { 
+        console.error("Prediction Error:", e);
+        alert("දෝෂයක් සිදු විය: " + e.message);
+    } finally { 
+        btn.innerText = "Search"; 
+    }
+};
+
+// 6. Initial Load
+window.addEventListener('DOMContentLoaded', () => {
+    // Market page එකේ ඉන්නවා නම් විතරක් මුලින්ම data ටික පෙන්වන්න
+    if (document.getElementById('productGrid')) {
+        displayProducts(allProducts);
+    }
+});

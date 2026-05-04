@@ -18,6 +18,28 @@ const genAI = new GoogleGenerativeAI(API_KEY);
 // }
 // checkAvailableModels();
 
+// Mobile Menu එක වැඩ කිරීමට අවශ්‍ය Logic එක
+document.addEventListener('DOMContentLoaded', () => {
+    const menuToggle = document.querySelector('.mobile-menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
+
+    if (menuToggle && navLinks) {
+        // Toggle Button එක click කරන විට active class එක මාරු කිරීම
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            menuToggle.classList.toggle('active');
+        });
+
+        // මෙනු එකේ තියෙන link එකක් click කළාම මෙනු එක වහන්න
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                menuToggle.classList.remove('active');
+            });
+        });
+    }
+});
+
 // 2. Full Data Array
 const allProducts = [
     // --- DAMBULLA ---
@@ -164,9 +186,24 @@ window.generatePrediction = async function() {
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
 
-    const prompt = `Based on these prices: ${JSON.stringify(allProducts)}, predict future prices for ${productName}. 
-                    Return ONLY a raw JSON object with no markdown tags. 
-                    Format: {"today": 420, "nextWeek": 435, "nextMonth": 450, "monthlyTrend": [400, 410, 420, 430, 440, 450, 460, 470, 480, 490, 500, 510]}`;
+    const prompt = `Context: You are a Sri Lankan agricultural market expert. 
+    Current Market Data: ${JSON.stringify(allProducts)}
+    
+    Task: Predict future prices for "${productName}" in the Sri Lankan market.
+    
+    Consider these seasonal factors in your prediction:
+    1. Seasonal Demand: Prices usually spike during April (Sinhala/Tamil New Year) and December (Christmas/New Year).
+    2. Weather Patterns: Heavy rain (Maha/Yala seasons) can damage crops and increase prices, while harvest seasons (aswanna kapana kala) significantly drop prices.
+    3. Current Trend: Use the "change" percentage in the provided data as the starting point.
+
+    Return ONLY a raw JSON object with no markdown tags. 
+    Format: {
+        "today": 420, 
+        "nextWeek": 435, 
+        "nextMonth": 450, 
+        "monthlyTrend": [400, 410, 420, 430, 440, 450, 460, 470, 480, 490, 500, 510]
+    }
+    Note: Ensure the monthlyTrend array represents a realistic 12-month fluctuation based on Sri Lankan seasonality.`;
 
     try {
         const response = await fetch(url, {
@@ -179,7 +216,6 @@ window.generatePrediction = async function() {
 
         const result = await response.json();
         
-        // 1. මුළු response එකම බලමු
         console.log("Full Gemini Result:", result);
 
         if (!response.ok) {
@@ -188,16 +224,13 @@ window.generatePrediction = async function() {
 
         const responseText = result.candidates[0].content.parts[0].text;
         
-        // 2. එන raw text එක බලමු
         console.log("Raw Response Text:", responseText);
         
         const cleanJson = responseText.replace(/```json|```/g, "").trim();
         const data = JSON.parse(cleanJson);
 
-        // 3. Parse කරපු JSON data එක බලමු
         console.log("Parsed Data Object:", data);
 
-        // UI Update
         document.getElementById('todayPrice').innerText = `${data.today}/-`;
         document.getElementById('weekPrice').innerText = `${data.nextWeek}/-`;
         document.getElementById('monthPrice').innerText = `${data.nextMonth}/-`;
@@ -208,7 +241,7 @@ window.generatePrediction = async function() {
 
     } catch (e) { 
         console.error("Prediction Error:", e);
-        alert("දෝෂයක් සිදු විය: " + e.message);
+        alert("Errior: " + e.message);
     } finally { 
         btn.innerText = "Search"; 
     }
@@ -216,8 +249,63 @@ window.generatePrediction = async function() {
 
 // 6. Initial Load
 window.addEventListener('DOMContentLoaded', () => {
-    // Market page එකේ ඉන්නවා නම් විතරක් මුලින්ම data ටික පෙන්වන්න
     if (document.getElementById('productGrid')) {
         displayProducts(allProducts);
     }
 });
+
+let myChart = null;
+
+window.initChart = function(monthlyTrend) {
+    const ctx = document.getElementById('priceChart').getContext('2d');
+    
+
+    if (myChart) {
+        myChart.destroy();
+    }
+
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(30, 93, 3, 0.5)');
+    gradient.addColorStop(1, 'rgba(30, 93, 3, 0)');
+
+    const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Price Trend (Rs.)',
+                data: monthlyTrend,
+                borderColor: '#1e5d03',
+                backgroundColor: gradient,
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4, 
+                pointRadius: 4,
+                pointBackgroundColor: '#1e5d03'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false 
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { color: '#888' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#888' }
+                }
+            }
+        }
+    });
+};

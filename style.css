@@ -444,3 +444,69 @@ body {
     outline: none;
     cursor: pointer;
 }
+
+.prediction-container {
+    padding: 40px 10%;
+    color: white;
+    text-align: center;
+}
+
+.search-section {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.search-box {
+    display: flex;
+    background: #000;
+    border: 1px solid #555;
+    border-radius: 10px;
+    padding: 5px 15px;
+}
+
+.search-box input {
+    background: transparent;
+    border: none;
+    color: white;
+    padding: 10px;
+    outline: none;
+}
+
+.chart-container {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #333;
+    border-radius: 30px;
+    padding: 40px;
+    margin-bottom: 40px;
+    height: 400px;
+}
+
+.prediction-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.p-card {
+    background: #1e5d03; /* Figma එකේ කොළ පාට */
+    padding: 30px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+}
+
+.p-info h3 { font-size: 24px; margin: 0; }
+.p-info p { opacity: 0.8; }
+.p-card h1 { font-size: 36px; margin: 0; }
+
+.disclaimer {
+    margin-top: 50px;
+    font-size: 14px;
+    opacity: 0.6;
+}
+

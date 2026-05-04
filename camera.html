@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello Agro | Camera Scan</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body class="camera-page">
+
+    <nav class="navbar">
+        <button class="mobile-menu-toggle">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+        <div class="nav-links" id="navLinks">
+            <a href="climate.html">Climate</a>
+            <a href="market.html">Market</a>
+            <a href="prediction.html">Prediction</a>
+            <a href="chat.html">AI Chat</a>
+            <a href="camera.html" class="active">Camara</a>
+        </div>
+    </nav>
+
+    <main class="camera-main">
+        <div class="video-wrapper">
+            <video id="webcam" autoplay playsinline></video>
+            <!-- Scan Button -->
+            <button id="scanBtn" class="scan-action-btn">
+                <i class="fa-solid fa-expand"></i> SCAN NOW
+            </button>
+        </div>
+        <canvas id="canvas" style="display:none;"></canvas>
+    </main>
+
+    <!-- Analysis Result Popup Modal -->
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="analysisOutput" class="markdown-body">
+                <!-- AI Result goes here -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
